@@ -1,0 +1,10 @@
+{{ ansible_managed | comment }}
+[Unit]
+Description=Prometheus Node Exporter
+
+[Service]
+User={{ node_exporter_user }}
+ExecStart={{ node_exporter_executable }} @{{ node_exporter_flags_file }}
+
+[Install]
+WantedBy=multi-user.target

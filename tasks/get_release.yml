@@ -1,0 +1,45 @@
+---
+- block:
+  - name: Get latest release data from GitHub
+    uri:
+      url: "{{ node_exporter_github_api_base }}/releases/latest"
+      method: GET
+      validate_certs: yes
+      status_code: 200
+      return_content: yes
+    register: github_api_json_response
+  - name: Set latest release version as desired version
+    set_fact: node_exporter_version="{{ github_api_json_response.json.tag_name | regex_replace('^v(.*)$', '\\1')}}"
+  delegate_to: 127.0.0.1
+  check_mode: no
+  when: node_exporter_version is undefined
+
+- block:
+  - name: Get sha256 checksums for {{ node_exporter_version }} release
+    uri:
+      url: "{{ node_exporter_github_releases_base }}/v{{ node_exporter_version }}/sha256sums.txt"
+      method: GET
+      validate_certs: yes
+      status_code: 200
+      return_content: yes
+    register: checksums_response
+  - name: Get sha256 checksum for node_exporter-{{ node_exporter_version }}.{{ node_exporter_arch }}.tar.gz
+    set_fact: node_exporter_checksum="{{ checksums_response | regex_replace('^.*([a-fA-f0-9]{64})\s+node_exporter-.*' + node_exporter_arch + '.*$', 'sha256:\\1') }}"
+  delegate_to: 127.0.0.1
+  check_mode: no
+  when: node_exporter_checksum is undefined
+
+
+- block:
+  - name: Creates local cache for releases
+    file:
+      path: "{{ node_exporter_release_local_tmp }}"
+      state: directory
+  - name: Download release version {{ node_exporter_version }}
+    get_url:
+      url: "{{ node_exporter_github_releases_base }}/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.{{ node_exporter_arch }}.tar.gz"
+      checksum: "{{ node_exporter_checksum }}"
+      dest: "{{ node_exporter_release_local_tmp }}/node_exporter-{{ node_exporter_version }}.{{ node_exporter_arch }}.tar.gz"
+      force: yes
+  delegate_to: 127.0.0.1
+  check_mode: no

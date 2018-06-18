@@ -1,0 +1,9 @@
+---
+# vars file for node_exporter
+node_exporter_executable: "{{ node_exporter_install_folder }}/node_exporter"
+node_exporter_flags_file: "{{ node_exporter_install_folder }}/node_exporter.flags"
+
+node_exporter_user: "node_exporter"
+
+systemd_unit_folder: "/etc/systemd/system"
+node_exporter_systemd_unit: "node_exporter.service"

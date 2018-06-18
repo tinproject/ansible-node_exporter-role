@@ -1,0 +1,18 @@
+---
+# defaults file for node_exporter
+
+# node_exporter_version: "0.16.0"
+# node_exporter_checksum: "sha256:e92a601a5ef4f77cce967266b488a978711dabc527a720bea26505cba426c029"
+
+node_exporter_github_api_base: "https://api.github.com/repos/prometheus/node_exporter"
+node_exporter_github_releases_base: "https://github.com/prometheus/node_exporter/releases/download"
+
+node_exporter_arch: "linux-amd64"
+
+node_exporter_release_local_tmp: "/tmp/releases"
+node_exporter_install_folder: "/opt/node_exporter"
+
+node_exporter_collector_enabled: []
+node_exporter_collector_disabled: []
+node_exporter_extra_flags: []
+

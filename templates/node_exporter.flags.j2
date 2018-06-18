@@ -1,0 +1,9 @@
+{% for item in node_exporter_collector_enabled %}
+--collector.{{ item }}
+{% endfor %}
+{% for item in node_exporter_collector_disabled %}
+--no-collector.{{ item }}
+{% endfor %}
+{% for item in node_exporter_extra_flags %}
+{{ item }}
+{% endfor %}

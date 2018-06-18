@@ -1,0 +1,45 @@
+---
+- name: Create system user
+  become: yes
+  user:
+    name: "{{ node_exporter_user }}"
+    state: present
+    system: yes
+    comment: "Prometheus node_exporter system user"
+
+- name: Create install folder
+  file:
+    path: "{{ node_exporter_install_folder }}"
+    state: directory
+    mode: 0755
+    user: root
+    group: "{{ node_exporter_user }}"
+
+- name: Unpack release file on remote host
+  unarchive:
+    src: "{{ node_exporter_release_local_tmp }}/node_exporter-{{ node_exporter_version }}.{{ node_exporter_arch }}.tar.gz"
+    dest: "{{ node_exporter_install_folder }}"
+    extra_opts: "--strip=1"
+
+- name: Copy flags file
+  template:
+    src: "node_exporter.flags.j2"
+    dest: "{{ node_exporter_install_folder }}/node_exporter.flags"
+    mode: 0644
+    user: root
+    group: "{{ node_exporter_user }}"
+  notify: Systemd restart node_exporter
+
+- name: Copy systemd service unit file
+  template:
+    src: "{{ node_exporter_systemd_unit }}.j2"
+    dest: "{{ systemd_unit_folder }}/{{ node_exporter_systemd_unit }}"
+    mode: 0644
+    user: root
+    group: root
+  notify: Systemd restart node_exporter
+
+- name: Systemd restart node_exporter
+  systemd:
+    name: "{{ node_exporter_systemd_unit }}"
+    enable: yes
