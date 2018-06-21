@@ -3,3 +3,4 @@
 - import_tasks: get_release.yml
 
 - import_tasks: install.yml
+  become: yes

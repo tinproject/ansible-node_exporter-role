@@ -15,4 +15,3 @@ node_exporter_install_folder: "/opt/node_exporter"
 node_exporter_collector_enabled: []
 node_exporter_collector_disabled: []
 node_exporter_extra_flags: []
-
