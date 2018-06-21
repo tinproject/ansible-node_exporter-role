@@ -1,0 +1,15 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    node_exporter_collector_enabled:
+      - systemd
+      - logind
+    node_exporter_collector_disabled:
+      - wifi
+      - xfs
+      - zfs
+    node_exporter_extra_flags:
+      - '--collector.systemd.unit-blacklist=".+\\.(scope|device)"'
+  roles:
+    - role: node_exporter
